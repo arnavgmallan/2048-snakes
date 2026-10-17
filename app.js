@@ -2,8 +2,13 @@
   'use strict';
 
   const SIZE = 4;
-  const BEST_KEY = '2048-best-v1';
-  const GAME_KEY = '2048-state-v1';
+  const BEST_KEY = '2048-snakes-best-v1';
+  const GAME_KEY = '2048-snakes-state-v1';
+  const SPECIES = [
+    { code: 'C', name: 'Cobra' }, { code: 'T', name: 'Typan' },
+    { code: 'M', name: 'Mumba' }, { code: 'V', name: 'Viper' },
+    { code: 'R', name: 'Rattle' }, { code: 'K', name: 'Krait' }
+  ];
   const boardEl = document.getElementById('board');
   const boardWrap = document.getElementById('board-wrap');
   const scoreEl = document.getElementById('score');
@@ -18,15 +23,15 @@
   let newCells = new Set();
   let mergedCells = new Set();
 
-  const freshBoard = () => Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
+  const freshBoard = () => Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
   const cloneBoard = value => value.map(row => row.slice());
 
   function loadGame() {
     best = Number(localStorage.getItem(BEST_KEY)) || 0;
     try {
       const saved = JSON.parse(localStorage.getItem(GAME_KEY));
-      if (saved && Array.isArray(saved.board) && saved.board.length === SIZE && saved.board.every(row => Array.isArray(row) && row.length === SIZE)) {
-        board = saved.board.map(row => row.map(n => Number.isFinite(n) && n >= 0 ? n : 0));
+      if (saved && Array.isArray(saved.board) && saved.board.length === SIZE && saved.board.every(row => Array.isArray(row) && row.length === SIZE) && saved.snakesVersion === 1) {
+        board = saved.board.map(row => row.map(tile => tile && Number.isFinite(tile.value) && tile.value > 0 && SPECIES.some(s => s.code === tile.species) ? { value: tile.value, species: tile.species } : null));
         score = Number.isFinite(saved.score) ? saved.score : 0;
         won = Boolean(saved.won);
         keepPlaying = Boolean(saved.keepPlaying);
@@ -39,7 +44,7 @@
   function persist() {
     try {
       localStorage.setItem(BEST_KEY, String(best));
-      localStorage.setItem(GAME_KEY, JSON.stringify({ board, score, won, keepPlaying }));
+      localStorage.setItem(GAME_KEY, JSON.stringify({ board, score, won, keepPlaying, snakesVersion: 1 }));
     } catch (_) { /* The game remains playable when storage is unavailable. */ }
   }
 
@@ -48,7 +53,7 @@
     for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) if (!board[r][c]) empty.push([r, c]);
     if (!empty.length) return null;
     const [r, c] = empty[Math.floor(Math.random() * empty.length)];
-    board[r][c] = Math.random() < 0.9 ? 2 : 4;
+    board[r][c] = { value: Math.random() < 0.9 ? 2 : 4, species: SPECIES[Math.floor(Math.random() * SPECIES.length)].code };
     newCells.add(`${r},${c}`);
     return [r, c];
   }
@@ -65,14 +70,20 @@
   function render() {
     boardEl.replaceChildren();
     for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
-      const value = board[r][c];
+      const tile = board[r][c];
+      const value = tile ? tile.value : 0;
       const cell = document.createElement('div');
-      cell.className = `cell${value ? ` tile-${value <= 2048 ? value : 'super'}` : ''}`;
+      cell.className = `cell${tile ? ` tile-${value <= 2048 ? value : 'super'} species-${tile.species}` : ''}`;
       if (newCells.has(`${r},${c}`)) cell.classList.add('tile-new');
       if (mergedCells.has(`${r},${c}`)) cell.classList.add('tile-merged');
       cell.setAttribute('role', 'gridcell');
-      cell.setAttribute('aria-label', value ? String(value) : 'empty');
-      cell.textContent = value ? String(value) : '';
+      const species = tile && SPECIES.find(s => s.code === tile.species);
+      cell.setAttribute('aria-label', tile ? `${value}, ${species.name}` : 'empty');
+      if (tile) {
+        const number = document.createElement('span'); number.className = 'tile-value'; number.textContent = value;
+        const tag = document.createElement('span'); tag.className = 'tile-species'; tag.setAttribute('aria-hidden', 'true'); tag.textContent = tile.species;
+        cell.append(number, tag);
+      }
       boardEl.append(cell);
     }
     scoreEl.textContent = score.toLocaleString();
@@ -103,13 +114,15 @@
   }
 
   function isGameOver() {
-    if (board.some(row => row.includes(0))) return false;
+    if (board.some(row => row.includes(null))) return false;
     for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
-      if (r < SIZE - 1 && board[r][c] === board[r + 1][c]) return false;
-      if (c < SIZE - 1 && board[r][c] === board[r][c + 1]) return false;
+      if (r < SIZE - 1 && canMerge(board[r][c], board[r + 1][c])) return false;
+      if (c < SIZE - 1 && canMerge(board[r][c], board[r][c + 1])) return false;
     }
     return true;
   }
+
+  function canMerge(a, b) { return Boolean(a && b && a.value === b.value && a.species === b.species); }
 
   function move(direction) {
     if (overlay && !overlay.hidden) return;
@@ -129,20 +142,20 @@
       const values = coords.map(([r, c]) => board[r][c]).filter(Boolean);
       const result = [];
       for (let i = 0; i < values.length; i++) {
-        if (values[i] === values[i + 1]) { result.push(values[i] * 2); gained += values[i] * 2; i++; }
+        if (canMerge(values[i], values[i + 1])) { result.push({ value: values[i].value * 2, species: values[i].species }); gained += values[i].value * 2; i++; }
         else result.push(values[i]);
       }
-      coords.forEach(([r, c], i) => { next[r][c] = result[i] || 0; if (result[i] && result[i] !== board[r][c]) changed = true; });
+      coords.forEach(([r, c], i) => { next[r][c] = result[i] || null; if (result[i] && (!board[r][c] || result[i].value !== board[r][c].value || result[i].species !== board[r][c].species)) changed = true; });
     }
     if (!changed) return;
     for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) {
-      if (next[r][c] !== board[r][c]) changed = true;
-      if (next[r][c] > board[r][c] && next[r][c] > 2) mergePositions.add(`${r},${c}`);
+      if ((!next[r][c]) !== (!board[r][c]) || (next[r][c] && board[r][c] && (next[r][c].value !== board[r][c].value || next[r][c].species !== board[r][c].species))) changed = true;
+      if (next[r][c] && board[r][c] && next[r][c].value > board[r][c].value) mergePositions.add(`${r},${c}`);
     }
     if (!changed) return;
     board = next; score += gained; best = Math.max(best, score); undoState = before;
     mergedCells = mergePositions;
-    if (!won && board.some(row => row.includes(2048))) won = true;
+    if (!won && board.some(row => row.some(tile => tile && tile.value >= 2048))) won = true;
     spawnTile(); persist(); render();
     if (gained) {
       const pop = document.getElementById('score-pop'); pop.textContent = `+${gained}`; pop.classList.remove('show'); void pop.offsetWidth; pop.classList.add('show');

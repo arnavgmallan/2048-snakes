@@ -1,4 +1,4 @@
-const CACHE_NAME = '2048-webapp-v1';
+const CACHE_NAME = '2048-snakes-webapp-v1';
 const APP_FILES = ['./', './index.html', './style.css', './app.js', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', event => {
@@ -7,7 +7,7 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('2048-webapp-') && key !== CACHE_NAME).map(key => caches.delete(key)))));
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => (key.startsWith('2048-webapp-') || key.startsWith('2048-snakes-webapp-')) && key !== CACHE_NAME).map(key => caches.delete(key)))));
   self.clients.claim();
 });
 

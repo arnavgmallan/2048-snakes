@@ -1,7 +1,7 @@
 {
-  "name": "2048 — Join the tiles",
-  "short_name": "2048",
-  "description": "A touch-friendly 2048 number puzzle.",
+  "name": "2048 Snakes — Join the tiles",
+  "short_name": "2048 Snakes",
+  "description": "A touch-friendly number puzzle with six snake species.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

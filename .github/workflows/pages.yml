@@ -1,4 +1,4 @@
-name: Deploy 2048 to GitHub Pages
+name: Deploy 2048 Snakes to GitHub Pages
 
 on:
   push:

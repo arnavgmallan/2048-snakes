@@ -6,18 +6,18 @@
   <meta name="theme-color" content="#faf8ef">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="2048">
-  <meta name="description" content="Join the tiles, reach 2048. A touch-friendly number puzzle for your iPhone, iPad, and browser.">
+  <meta name="apple-mobile-web-app-title" content="2048 Snakes">
+  <meta name="description" content="Join matching snake tiles, reach 2048. A touch-friendly number puzzle for your browser.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon.svg">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
-  <title>2048 — Join the tiles</title>
+  <title>2048 Snakes — Join the tiles</title>
 </head>
 <body>
   <main class="game-shell">
     <header class="topbar">
-      <a class="wordmark" href="./" aria-label="2048 home">2048<span class="wordmark-dot">.</span></a>
+      <a class="wordmark" href="./" aria-label="2048 Snakes home">2048<span class="wordmark-dot">.</span></a>
       <button class="icon-button" id="new-game-top" type="button" aria-label="Start a new game" title="New game">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9a7 7 0 0 1 11.7-2L20 12M4 12l2.7 5a7 7 0 0 0 11.7-2"/></svg>
       </button>
@@ -25,9 +25,9 @@
 
     <section class="intro" aria-labelledby="game-title">
       <div>
-        <p class="eyebrow">A little brain break</p>
-        <h1 id="game-title">Join the tiles.</h1>
-        <p class="subtitle">Slide the numbers. Make it to <strong>2048.</strong></p>
+        <p class="eyebrow">Six species. One big number.</p>
+        <h1 id="game-title">2048 Snakes.</h1>
+        <p class="subtitle">Match numbers and species to reach <strong>2048.</strong></p>
       </div>
       <div class="score-group" aria-label="Game scores">
         <div class="score-card"><span class="score-label">SCORE</span><strong id="score">0</strong><span class="score-pop" id="score-pop" aria-hidden="true"></span></div>
@@ -58,9 +58,10 @@
       </button>
     </nav>
 
-    <p class="how-to"><span class="desktop-hint"><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> to move</span><span class="mobile-hint">Swipe in any direction to move</span><span class="hint-divider">·</span> Matching tiles merge into one.</p>
+    <p class="how-to"><span class="desktop-hint"><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> to move</span><span class="mobile-hint">Swipe in any direction to move</span><span class="hint-divider">·</span> Same species and number merge.</p>
+    <section class="species-legend" aria-label="Snake species"><span><b>C</b> Cobra</span><span><b>T</b> Typan</span><span><b>M</b> Mumba</span><span><b>V</b> Viper</span><span><b>R</b> Rattle</span><span><b>K</b> Krait</span></section>
 
-    <footer class="footer"><span>Made for the in-between moments.</span><span class="footer-mark">2048 <span>✳</span></span></footer>
+    <footer class="footer"><span>Six species. Match carefully.</span><span class="footer-mark">2048 Snakes <span>✳</span></span></footer>
   </main>
   <script src="app.js" defer></script>
 </body>
