@@ -9,6 +9,14 @@
     { code: 'M', name: 'Mumba' }, { code: 'V', name: 'Viper' },
     { code: 'R', name: 'Rattle' }, { code: 'K', name: 'Krait' }
   ];
+  const SNAKE_GLYPHS = {
+    C: '<path d="M4 23c6-6 11 1 16-5 3-3 2-6 1-8"/><path d="M19 14c-5-3-5-9 0-12 4-2 9 0 10 4 2 4-1 7-5 8"/><path d="M26 7c3-3 7-2 9 1l-3 4-7-1"/><path class="snake-detail" d="M18 5c2 2 2 5 0 7"/><circle cx="32" cy="7" r=".9" class="snake-eye"/>',
+    T: '<path d="M3 23c6-10 10-8 15-3 5 5 8 2 11-4l4-4"/><path d="m29 9 7-2 3 3-4 4-7-1z"/><path d="m30 9 5-1" class="snake-detail"/><circle cx="35" cy="9" r=".8" class="snake-eye"/>',
+    M: '<path d="M4 24c8-1 7-9 14-10 7-1 7-8 12-9"/><path d="m29 4 8 1-3 4-7-1z"/><path class="snake-mouth" d="m31 7 4 1"/><circle cx="34" cy="5" r=".8" class="snake-eye"/>',
+    V: '<path d="M3 23c6-8 12 2 17-4 3-4 2-7 5-8"/><path class="snake-head" d="m23 11 6-5 9 2 1 4-8 1-4 5z"/><circle cx="34" cy="9" r=".9" class="snake-eye"/>',
+    R: '<path d="M9 20c-3-7 7-12 13-7 6 5 0 12-6 9-3-1-3-5 0-6 3-1 5 2 3 4"/><path d="M18 16c6-7 9-8 14-8"/><path d="m30 6 7 1-3 4-6-1z"/><circle cx="34" cy="7" r=".8" class="snake-eye"/><path class="snake-rattle" d="M8 21 5 23l-2-1 1-2-2-1 2-2 2 1 2-1"/>',
+    K: '<path d="M3 24c5-9 9-10 14-5 5 6 6 2 9-3 3-5 6-5 8-6"/><path d="m31 8 6 1-3 4-6-1z"/><path class="snake-band" d="m8 17 3-2m2 4 3-2m4 1 3-2m3-5 3 2"/><circle cx="34" cy="9" r=".8" class="snake-eye"/>'
+  };
   const boardEl = document.getElementById('board');
   const boardWrap = document.getElementById('board-wrap');
   const scoreEl = document.getElementById('score');
@@ -95,9 +103,9 @@
         const buddy = document.createElement('span'); buddy.className = `tile-buddy buddy-${tile.species}`; buddy.setAttribute('aria-hidden', 'true');
         const tag = document.createElement('span'); tag.className = 'tile-species'; tag.textContent = tile.species;
         const snake = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        snake.setAttribute('viewBox', '0 0 32 24'); snake.setAttribute('class', 'snake-glyph');
-        snake.innerHTML = '<path d="M3 18c4-8 8 7 13-2s8-8 12-4"/><path d="M23 7c1-3 5-3 6-1l-1 5-5-1"/><circle cx="27" cy="8" r=".8" class="snake-eye"/><path d="M4 16l-2 1 2 2" class="snake-tail"/>';
-        buddy.append(tag, snake);
+        snake.setAttribute('viewBox', '0 0 40 28'); snake.setAttribute('class', 'snake-glyph'); snake.setAttribute('focusable', 'false');
+        snake.innerHTML = SNAKE_GLYPHS[tile.species];
+        buddy.append(snake, tag);
         cell.append(number, buddy);
       }
       boardEl.append(cell);

@@ -47,11 +47,14 @@ h1 { margin: 0; font: 700 clamp(30px, 7.3vw, 40px)/1.08 'Space Grotesk', sans-se
 .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--cell-gap); aspect-ratio: 1; }
 .cell { position:relative; display:grid; place-items:center; min-width:0; border-radius:var(--radius); background:var(--empty); font:700 clamp(25px, 8.3vw, 45px)/1 'Space Grotesk',sans-serif; letter-spacing:-1.5px; transition:background-color .1s ease,color .1s ease; }
 .tile-value { line-height:1; }
-.tile-buddy { position:absolute; right:6px; bottom:5px; display:flex; align-items:center; gap:2px; height:20px; color:#369d7e; }
-.tile-species { display:grid; place-items:center; width:17px; height:17px; border:1.5px solid currentColor; border-radius:50%; background:rgba(255,255,255,.45); font:800 9px/1 'DM Sans',sans-serif; letter-spacing:0; }
-.snake-glyph { width:25px; height:19px; overflow:visible; fill:none; stroke:currentColor; stroke-width:3.2; stroke-linecap:round; stroke-linejoin:round; }
+.tile-buddy { position:absolute; right:6px; bottom:4px; display:flex; align-items:center; gap:3px; height:25px; color:#369d7e; }
+.tile-species { display:grid; place-items:center; width:21px; height:21px; border:1.7px solid currentColor; border-radius:50%; background:rgba(255,255,255,.55); font:800 11px/1 'DM Sans',sans-serif; letter-spacing:0; }
+.snake-glyph { width:34px; height:25px; overflow:visible; fill:none; stroke:currentColor; stroke-width:3.1; stroke-linecap:round; stroke-linejoin:round; }
 .snake-glyph .snake-eye { fill:currentColor; stroke:none; }
-.snake-glyph .snake-tail { stroke-width:2.3; }
+.snake-glyph .snake-head { fill:currentColor; stroke-width:2.4; }
+.snake-glyph .snake-detail, .snake-glyph .snake-band { stroke:#fff; stroke-width:1.4; opacity:.85; }
+.snake-glyph .snake-mouth { stroke:#5b302d; stroke-width:1.4; }
+.snake-glyph .snake-rattle { stroke-width:2.7; }
 .buddy-C { color:#dc715b; }.buddy-T { color:#e99a37; }.buddy-M { color:#8e6bc5; }.buddy-V { color:#2b9c93; }.buddy-R { color:#d15d8b; }.buddy-K { color:#5682c7; }
 .cell.tile-new { animation: appear .16s ease-out; }
 .cell.tile-merged { animation: merge .2s ease-out; }
