@@ -25,9 +25,9 @@
 
     <section class="intro" aria-labelledby="game-title">
       <div>
-        <p class="eyebrow">Six species. One big number.</p>
+        <p class="eyebrow">Six silly snake friends!</p>
         <h1 id="game-title">2048 Snakes.</h1>
-        <p class="subtitle">Match numbers and species to reach <strong>2048.</strong></p>
+        <p class="subtitle">Slide matching snakes together. Make a <strong>2048!</strong></p>
       </div>
       <div class="score-group" aria-label="Game scores">
         <div class="score-card"><span class="score-label">SCORE</span><strong id="score">0</strong><span class="score-pop" id="score-pop" aria-hidden="true"></span></div>
@@ -50,6 +50,9 @@
     </section>
 
     <nav class="game-actions" aria-label="Game controls">
+      <button class="button button-sound" id="sound-toggle" type="button" aria-pressed="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4z"/><path d="M16 9a5 5 0 0 1 0 6M18.5 6.5a9 9 0 0 1 0 11"/></svg><span class="sound-label">Sound on</span>
+      </button>
       <button class="button button-secondary" id="undo" type="button" disabled>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h9a7 7 0 0 1 0 14h-2"/></svg>Undo
       </button>
@@ -58,10 +61,10 @@
       </button>
     </nav>
 
-    <p class="how-to"><span class="desktop-hint"><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> to move</span><span class="mobile-hint">Swipe in any direction to move</span><span class="hint-divider">·</span> Same species and number merge.</p>
+    <p class="how-to"><span class="desktop-hint"><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> to move</span><span class="mobile-hint">Swipe to slide the snakes</span><span class="hint-divider">·</span> Same letter + number make a pair!</p>
     <section class="species-legend" aria-label="Snake species"><span><b>C</b> Cobra</span><span><b>T</b> Typan</span><span><b>M</b> Mumba</span><span><b>V</b> Viper</span><span><b>R</b> Rattle</span><span><b>K</b> Krait</span></section>
 
-    <footer class="footer"><span>Six species. Match carefully.</span><span class="footer-mark">2048 Snakes <span>✳</span></span></footer>
+    <footer class="footer"><span>Find a pair. Hear them hiss!</span><span class="footer-mark">2048 Snakes <span>✳</span></span></footer>
   </main>
   <script src="app.js" defer></script>
 </body>

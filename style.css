@@ -47,7 +47,12 @@ h1 { margin: 0; font: 700 clamp(30px, 7.3vw, 40px)/1.08 'Space Grotesk', sans-se
 .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--cell-gap); aspect-ratio: 1; }
 .cell { position:relative; display:grid; place-items:center; min-width:0; border-radius:var(--radius); background:var(--empty); font:700 clamp(25px, 8.3vw, 45px)/1 'Space Grotesk',sans-serif; letter-spacing:-1.5px; transition:background-color .1s ease,color .1s ease; }
 .tile-value { line-height:1; }
-.tile-species { position:absolute; right:7px; bottom:6px; display:grid; place-items:center; width:19px; height:19px; border:1px solid currentColor; border-radius:50%; font:700 10px/1 'DM Sans',sans-serif; letter-spacing:0; opacity:.78; }
+.tile-buddy { position:absolute; right:6px; bottom:5px; display:flex; align-items:center; gap:2px; height:20px; color:#369d7e; }
+.tile-species { display:grid; place-items:center; width:17px; height:17px; border:1.5px solid currentColor; border-radius:50%; background:rgba(255,255,255,.45); font:800 9px/1 'DM Sans',sans-serif; letter-spacing:0; }
+.snake-glyph { width:25px; height:19px; overflow:visible; fill:none; stroke:currentColor; stroke-width:3.2; stroke-linecap:round; stroke-linejoin:round; }
+.snake-glyph .snake-eye { fill:currentColor; stroke:none; }
+.snake-glyph .snake-tail { stroke-width:2.3; }
+.buddy-C { color:#dc715b; }.buddy-T { color:#e99a37; }.buddy-M { color:#8e6bc5; }.buddy-V { color:#2b9c93; }.buddy-R { color:#d15d8b; }.buddy-K { color:#5682c7; }
 .cell.tile-new { animation: appear .16s ease-out; }
 .cell.tile-merged { animation: merge .2s ease-out; }
 @keyframes appear { from{transform:scale(.72);opacity:.5} to{transform:scale(1);opacity:1} }
@@ -64,7 +69,7 @@ h1 { margin: 0; font: 700 clamp(30px, 7.3vw, 40px)/1.08 'Space Grotesk', sans-se
 .tile-1024, .tile-2048 { color:#fffaf1; background:#ef9e54; font-size:clamp(18px,5.5vw,29px); letter-spacing:-1px; }
 .tile-2048 { background:#ef8d4b; box-shadow:inset 0 0 0 2px rgba(255,255,255,.28); }
 .tile-super { color:#fffaf1; background:#514a42; font-size:clamp(16px,4.8vw,25px); letter-spacing:-1px; }
-.species-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:7px 13px; margin-top:14px; color:#777365; font-size:10px; }
+.species-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:7px 13px; margin-top:14px; color:#777365; font-size:11px; }
 .species-legend span { display:inline-flex; align-items:center; gap:4px; }
 .species-legend b { display:inline-grid; place-items:center; width:17px; height:17px; border:1px solid #d9ceb6; border-radius:50%; color:#615c50; font-size:9px; }
 .game-overlay { position:absolute; inset:0; display:grid; place-items:center; padding:24px; border-radius:22px; background:rgba(250,248,239,.79); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); animation:overlay-in .2s ease-out; }
@@ -84,6 +89,8 @@ h1 { margin: 0; font: 700 clamp(30px, 7.3vw, 40px)/1.08 'Space Grotesk', sans-se
 .button:disabled { opacity:.45; cursor:not-allowed; }
 .button-secondary { color:#69665b; border-color:#e7e1d3; background:rgba(255,255,255,.66); }
 .button-primary { flex:1; color:white; background:var(--coral); box-shadow:0 5px 12px rgba(214,111,83,.17); }
+.button-sound { flex:none; color:#377963; border-color:#cee5d8; background:#e4f4e9; }
+.button-sound[aria-pressed="false"] { color:#777365; border-color:#e7e1d3; background:rgba(255,255,255,.66); }
 .button-primary:hover:not(:disabled) { background:var(--coral-dark); box-shadow:0 7px 16px rgba(214,111,83,.22); }
 .how-to { display:flex; align-items:center; justify-content:center; gap:7px; margin:20px 0 0; color:#8c887c; font-size:11px; }
 kbd { display:inline-grid; place-items:center; min-width:19px; height:20px; padding:0 4px; border:1px solid #e4decf; border-radius:5px; background:rgba(255,255,255,.65); color:#777365; font:600 11px 'DM Sans',sans-serif; }
@@ -105,6 +112,8 @@ kbd { display:inline-grid; place-items:center; min-width:19px; height:20px; padd
   .cell { border-radius:11px; }
   .game-overlay { border-radius:18px; }
   .game-actions { margin-top:13px; }
+  .game-actions .button { gap:6px; min-height:49px; padding:0 10px; font-size:12px; }
+  .game-actions .button svg { width:16px; height:16px; }
   .how-to { margin-top:15px; font-size:10px; }
   .desktop-hint { display:none; }
   .mobile-hint { display:inline; }

@@ -19,7 +19,10 @@
   const overlayCopy = document.getElementById('overlay-copy');
   const overlayEyebrow = document.getElementById('overlay-eyebrow');
   const overlayActions = document.getElementById('overlay-actions');
+  const soundButton = document.getElementById('sound-toggle');
   let board, score, best, won, keepPlaying, undoState, touchStart = null;
+  let soundEnabled = true;
+  let audioContext = null;
   let newCells = new Set();
   let mergedCells = new Set();
 
@@ -53,7 +56,13 @@
     for (let r = 0; r < SIZE; r++) for (let c = 0; c < SIZE; c++) if (!board[r][c]) empty.push([r, c]);
     if (!empty.length) return null;
     const [r, c] = empty[Math.floor(Math.random() * empty.length)];
-    board[r][c] = { value: Math.random() < 0.9 ? 2 : 4, species: SPECIES[Math.floor(Math.random() * SPECIES.length)].code };
+    const neighbors = [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]]
+      .map(([row, column]) => board[row]?.[column]).filter(Boolean);
+    const nearbySpecies = neighbors.map(tile => tile.species);
+    const species = nearbySpecies.length && Math.random() < 0.8
+      ? nearbySpecies[Math.floor(Math.random() * nearbySpecies.length)]
+      : SPECIES[Math.floor(Math.random() * SPECIES.length)].code;
+    board[r][c] = { value: Math.random() < 0.95 ? 2 : 4, species };
     newCells.add(`${r},${c}`);
     return [r, c];
   }
@@ -62,7 +71,9 @@
     if (confirmFirst && board && board.some(row => row.some(Boolean)) && !window.confirm('Start a new game? Your current board will be cleared.')) return;
     board = freshBoard(); score = 0; won = false; keepPlaying = false; undoState = null;
     newCells = new Set(); mergedCells = new Set();
-    spawnTile(); spawnTile();
+    board[1][1] = { value: 2, species: 'C' };
+    board[1][2] = { value: 2, species: 'C' };
+    spawnTile();
     overlay.hidden = true;
     persist(); render();
   }
@@ -81,8 +92,13 @@
       cell.setAttribute('aria-label', tile ? `${value}, ${species.name}` : 'empty');
       if (tile) {
         const number = document.createElement('span'); number.className = 'tile-value'; number.textContent = value;
-        const tag = document.createElement('span'); tag.className = 'tile-species'; tag.setAttribute('aria-hidden', 'true'); tag.textContent = tile.species;
-        cell.append(number, tag);
+        const buddy = document.createElement('span'); buddy.className = `tile-buddy buddy-${tile.species}`; buddy.setAttribute('aria-hidden', 'true');
+        const tag = document.createElement('span'); tag.className = 'tile-species'; tag.textContent = tile.species;
+        const snake = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        snake.setAttribute('viewBox', '0 0 32 24'); snake.setAttribute('class', 'snake-glyph');
+        snake.innerHTML = '<path d="M3 18c4-8 8 7 13-2s8-8 12-4"/><path d="M23 7c1-3 5-3 6-1l-1 5-5-1"/><circle cx="27" cy="8" r=".8" class="snake-eye"/><path d="M4 16l-2 1 2 2" class="snake-tail"/>';
+        buddy.append(tag, snake);
+        cell.append(number, buddy);
       }
       boardEl.append(cell);
     }
@@ -124,6 +140,35 @@
 
   function canMerge(a, b) { return Boolean(a && b && a.value === b.value && a.species === b.species); }
 
+  function playHiss() {
+    if (!soundEnabled) return;
+    try {
+      const AudioContextType = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextType) return;
+      audioContext ||= new AudioContextType();
+      if (audioContext.state === 'suspended') audioContext.resume();
+      const duration = 0.22;
+      const noise = audioContext.createBufferSource();
+      const buffer = audioContext.createBuffer(1, Math.ceil(audioContext.sampleRate * duration), audioContext.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      noise.buffer = buffer;
+      const filter = audioContext.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 2100; filter.Q.value = 0.7;
+      const volume = audioContext.createGain();
+      const now = audioContext.currentTime;
+      volume.gain.setValueAtTime(0.0001, now); volume.gain.exponentialRampToValueAtTime(0.07, now + 0.025); volume.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      noise.connect(filter); filter.connect(volume); volume.connect(audioContext.destination);
+      noise.start(now); noise.stop(now + duration);
+    } catch (_) { /* Audio is optional; keep the game playable when unavailable. */ }
+  }
+
+  function updateSoundButton() {
+    soundButton.setAttribute('aria-pressed', String(soundEnabled));
+    soundButton.setAttribute('aria-label', soundEnabled ? 'Turn sound off' : 'Turn sound on');
+    soundButton.title = soundEnabled ? 'Sound on' : 'Sound off';
+    soundButton.querySelector('.sound-label').textContent = soundEnabled ? 'Sound on' : 'Sound off';
+  }
+
   function move(direction) {
     if (overlay && !overlay.hidden) return;
     const before = { board: cloneBoard(board), score, won, keepPlaying };
@@ -158,6 +203,7 @@
     if (!won && board.some(row => row.some(tile => tile && tile.value >= 2048))) won = true;
     spawnTile(); persist(); render();
     if (gained) {
+      playHiss();
       const pop = document.getElementById('score-pop'); pop.textContent = `+${gained}`; pop.classList.remove('show'); void pop.offsetWidth; pop.classList.add('show');
     }
   }
@@ -190,8 +236,9 @@
   undoButton.addEventListener('click', undo);
   document.getElementById('new-game').addEventListener('click', () => startFresh(true));
   document.getElementById('new-game-top').addEventListener('click', () => startFresh(true));
+  soundButton.addEventListener('click', () => { soundEnabled = !soundEnabled; updateSoundButton(); });
 
-  loadGame(); render();
+  updateSoundButton(); loadGame(); render();
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
   }

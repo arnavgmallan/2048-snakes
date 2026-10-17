@@ -1,4 +1,4 @@
-const CACHE_NAME = '2048-snakes-webapp-v1';
+const CACHE_NAME = '2048-snakes-webapp-v2';
 const APP_FILES = ['./', './index.html', './style.css', './app.js', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', event => {

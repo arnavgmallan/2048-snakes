@@ -13,8 +13,9 @@ A touch friendly 2048 puzzle where every tile belongs to one of six snake specie
 
 ## Play
 
-- Use the arrow keys on a keyboard or swipe on a touch screen.
+- Use the arrow keys on a keyboard or swipe on a touch screen. A matching pair starts each new game.
 - Only tiles with both the same number and species can combine.
+- Nearby species appear more often to make matches easier to find. Merge sounds can be switched off.
 - Use **Undo** to roll back the last move, or **New game** to start over.
 
 Scores and the current game are saved in the browser. The static site can be hosted with GitHub Pages using the included workflow. Open `index.html` to play locally, or serve the folder from a static web host to use it as an installable web app.
